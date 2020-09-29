@@ -13,9 +13,10 @@ function myBilateralFilter(img, name)
         sigma_s = 0.9;
         count = 17;
     end
+
     [X,Y] = meshgrid(-5:5,-5:5);
     G_space = exp(-(X.^2+Y.^2)/(2*sigma_s^2));
-    imwrite(G_space(1:2*5+1, 1:2*5+1), "../images/Spatial_gaussian$" + sigma_s +".png")
+    
     figure(count)
     imagesc(G_space(1:2*5+1, 1:2*5+1));
     colormap(gray);
@@ -24,15 +25,19 @@ function myBilateralFilter(img, name)
     title("Spatial Gaussian for \sigma_s = " + sigma_s)
 
 end
+
+
 function grass(img)
     img = im2double(img);
     [m, n] = size(img);
     rng('default');
+
     noisyImg = img + (max(img(:)) - min(img(:)))*randn([m,n])*5/100;
     W = 5; %Window parameter, usually be chose to 5*sigma_s
     count=0;
     msg="For Grass Optimal sigma_s is 0.8 and Optimal sigma_i is 0.16";
     disp(msg);
+    
     for sigma_s= [0.8, 0.72, 0.88]
         for sigma_i= [0.16, 0.144, 0.176]
             if(sigma_s==0.8 && sigma_i ==0.16 || sigma_s==0.72 && sigma_i ==0.16 || sigma_s==0.88 && sigma_i ==0.16 || sigma_s==0.8 && sigma_i ==0.144 || sigma_s==0.8 && sigma_i ==0.176)
@@ -79,16 +84,19 @@ function grass(img)
     end
 end
 
+
 function barbara(img)
     img = im2double(img);
     img=img/255;
     [m, n] = size(img);
     count = 5;
     rng('default');
+    
     noisyImg = img + (max(img(:)) - min(img(:)))*randn([m,n])*5/100;
     W = 5; %Window parameter, usually be chose to 5*sigma_s
     msg="For Barbara Optimal sigma_s is 0.9 and Optimal sigma_i is 0.05";
     disp(msg);
+    
     for sigma_s= [0.9, 0.81, 0.99]
         for sigma_i= [0.05, 0.045, 0.055]
             if(sigma_s==0.9 && sigma_i ==0.05 || sigma_s==0.9 && sigma_i ==0.045 || sigma_s==0.9 && sigma_i ==0.055 || sigma_s==0.81 && sigma_i ==0.05 || sigma_s==0.99 && sigma_i ==0.05)
@@ -136,15 +144,18 @@ function barbara(img)
     end
 end
 
+
 function honey(img)
     img = im2double(img);
     [m, n] = size(img);
     count = 10;
     rng('default');
+    
     noisyImg = img + (max(img(:)) - min(img(:)))*randn([m,n])*5/100;
     W = 5; %Window parameter, usually be chose to 5*sigma_s
     msg="For HoneyComb Optimal sigma_s is 0.95 and Optimal sigma_i is 0.15";
     disp(msg);
+    
     for sigma_s= [0.95, 0.855, 1.045]
         for sigma_i= [0.15, 0.135, 0.165]
             if(sigma_s==0.95 && sigma_i ==0.15 || sigma_s==0.855 && sigma_i ==0.15 || sigma_s==1.045 && sigma_i ==0.15 || sigma_s==0.95 && sigma_i ==0.135 || sigma_s==0.95 && sigma_i ==0.165)
