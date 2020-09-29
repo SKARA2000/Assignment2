@@ -1,41 +1,38 @@
 %% myUnsharpMasking: sharpen the image stored at given path
-function [imageSharp] = myUnsharpMasking(path)
+function myUnsharpMasking(path, name, count)
 	load(path, "imageOrig");
 	imageOrig = im2double(imageOrig);
-	count = 0;
-    
-	kernel = [0 1 0; 1 -4 1; 0 1 0];
-	identity = [0 0 0; 0 1 0; 0 0 0]; 
+    W = 20; % window Size
+    sigma_s=0;
+    c=0;
+	if(name=="lion")
+        sigma_s=5;
+        c=2.5;
+    else
+        sigma_s=7;
+        c=3;
+    end
+    G1 = fspecial('gaussian',2*W+1,sigma_s);
+    G1F = imfilter(imageOrig, G1);
+    imageSharp = imageOrig + c*(imageOrig-G1F);
+    count = count + 1;
+    msg = "Sharpened Image for weight = " + c + " Sigma =" + sigma_s;
+    disp(msg);
+    if(name=="lion")
+        imwrite(imageSharp, "../images/lion_crop$" + c +"$" +sigma_s + ".png")
+    else
+        imwrite(imageSharp, "../images/moon_crop$" + c +"$" +sigma_s + ".png")
+    end
 
-	for c = 1:0.5:10
-		mat = (identity - c * kernel);
-		imageSharp = convImage(imageOrig, mat);
-		count = count + 1;
-		msg = "Sharpened Image for weight = " + c;
-
-		%% plotting two images side by side
-		figure(count)
-		subplot(1,2,1), imshow(imageOrig);
-		colorbar
-		axis on
-		title("Original Image")
-		subplot(1,2,2), imshow(imageSharp);
-		colorbar
-		axis on
-		title(msg);
-	end
-end
-
-
-%% convImage: use a filter and convolve image
-function [convImg] = convImage(img, mat)
-	[m, n] = size(img);
-	convImg = img;
-
-	for i = 2:1:m-1 
-		for j = 2:1:n-1
-			product = img(i-1:1:i+1, j-1:1:j+1) .* mat;
-			convImg(i, j) = sum(sum(product));  
-		end 
-	end
+%% plotting two images side by side
+    figure(count)
+    subplot(1,2,1), imshow(imageOrig);
+    colorbar
+    axis on
+    title("Original Image")
+    subplot(1,2,2), imshow(imageSharp);
+    colorbar
+    axis on
+    title(msg);
+        
 end
